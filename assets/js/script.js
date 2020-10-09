@@ -203,8 +203,7 @@ var startClicked = function(){
 var ansBtnClickHander = function(event){
     var ansIdx = event.target.getAttribute("data-index");    
     if(ansIdx){
-        
-        
+        console.log("clicked: " + ansIdx);
     }; 
 };
 
