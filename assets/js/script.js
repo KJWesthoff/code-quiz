@@ -2,13 +2,12 @@
 // ------ Variable Declarations ------------
 
 // ------------------------------
-// build page backbone from blank
+// build page statid DOM backbone from blank
 // ------------------------------
 
 
 // grab the body
 var bodyEl = document.body;
-
 
 // ------------------------------------------
 // make a header showing highscores and timer
@@ -25,9 +24,16 @@ highscoreLinkEl.textContent = "High Scores"
 //display timer part
 var timerEl = document.createElement("div");
 
+// make a start button
+var startButtonEl = document.createElement("button");
+startButtonEl.setAttribute("id", "startbutton");
+startButtonEl.setAttribute("type", "button");
+startButtonEl.setAttribute("style", "width: 200px");
+startButtonEl.textContent = "Start Timer"
 
 // buld header
-headerEl.appendChild(highscoreLinkEl)
+headerEl.appendChild(highscoreLinkEl);
+headerEl.appendChild(startButtonEl);
 headerEl.appendChild(timerEl);
 bodyEl.appendChild(headerEl);
 
@@ -35,19 +41,18 @@ bodyEl.appendChild(headerEl);
 // --------------------------------------------
 // Make the main part for start button and quiz
 // --------------------------------------------
-
 var mainEl = document.createElement("main");
-mainEl.setAttribute("style", "text-align:center");
-
-// make a start button
-var startButtonEl = document.createElement("button");
-startButtonEl.setAttribute("id", "startbutton");
-startButtonEl.setAttribute("type", "button");
-startButtonEl.textContent = "Start Timer"
+mainEl.setAttribute("style", "display: flex; flex-direction: column-reverse; ;text-align:center");
 
 
-//build main section
-mainEl.appendChild(startButtonEl);
+//buid a containerdiv for questions 
+var qContainerEl = document.createElement("div");
+qContainerEl.setAttribute("id", "qContainer");
+qContainerEl.setAttribute("style", "display: flex; flex-direction: column-reverse");
+
+
+//build main section put it on the body
+mainEl.appendChild(qContainerEl);
 bodyEl.appendChild(mainEl);
 
 
@@ -59,22 +64,35 @@ var qArray = [];
 // Question object structure:
 test = {q:"What is the meaning of life",
         p: [44, 43, 42, 41],
-        a_index: 2};
+        a: 2};
 
 test2 = {q:"What is Hoisting",
 p: ["The feeling you get when code works","Affecting the order which code is interpreted"],
-a_index: 1};
+a: 1};
 
 test3 = {q:"What is Bubbeling",
 p: ["The feeling you get when code works","Affecting the order which events are handled", "Putting rounded corners on all borders"],
-a_index: 1};
+a: 1};
+
+test4 = {q: "what is the best way to get a reply from a function running in a timeInterval",
+p: ["Use a callback", "put it in a global varible", "you can't"],
+a: 0};
 
 
 qArray[0] = test;
 qArray[1] = test2;
-qArray[3] = test3;
-console.log(qArray);
+qArray[2] = test3;
+qArray[3] = test4;
     
+
+
+// YYikes global variables
+var i_current = 0;
+var clicked = null;
+var score = 0;
+
+
+
 
 // ------ END Variable Declarations ------------
 
@@ -85,15 +103,18 @@ console.log(qArray);
 // ------ Function Declarations ------------
 
 
-// -----------------------
-// Build dynamic elements
-// -----------------------
+// --------------------------
+// Build dynamic DOM elements
+// --------------------------
+
 
 var buildQuestionElement = function(qObj){
     // takes a question qObj and returns a DOM element
     var qEl = document.createElement("div");
     qEl.setAttribute("style", "display: flex; flex-direction: column; flex-wrap: wrap")
-    qEl.setAttribute("id", "qContainer")
+    
+   
+    
     // Heading with the question and append to qEl
     var qH2El = document.createElement("h2");
     qH2El.textContent = qObj.q;
@@ -106,7 +127,7 @@ var buildQuestionElement = function(qObj){
     return qEl;
 };
 
-
+// Build a block of buttins with possible answers
 var buildAnswerbuttons = function(qObj){
     // takes a question object and returns a div with buttons
     var ansBtnContainer = document.createElement("div");
@@ -125,22 +146,53 @@ var buildAnswerbuttons = function(qObj){
     return ansBtnContainer;
 };
 
-// -----------------------------
-// Check answers and keep talley
-// -----------------------------
-
-
-
-
-
-var checkAnswerCorrect = function(qEl, answer){
-
-   if(parseInt(qEl.a) === parseInt(answer)){
-       return true;
-   } else {
-       return false;
-   };
+var putQuestionInDOM = function(qObj){
+    qEll = buildQuestionElement(qObj);
+    var id = "qElement" + i_current;
+    console.log(id);
+    qEll.setAttribute("id", id)
+    // get the current qContainer and replace it with the new qEll
+    qContainer = document.getElementById("qContainer"); 
+    qContainer.appendChild(qEll); 
+    
 };
+
+
+// Check answers and keep talley
+var buildReponseEl = function(qEl, answer){
+    // takes a question object and the user reponse, returns a dom element with a reponse
+    
+    respEl = document.createElement("div");
+   
+    if(parseInt(qEl.a) === parseInt(answer)){
+        right = "Correct !";
+        score += 100;
+    } else {
+        right = "Not Correct !";
+
+    };
+
+    respEl.textContent = "That is: " + right; 
+    var id = "qElement" + i_current;
+    document.getElementById(id).appendChild(respEl);
+};
+
+// ------------------
+// main quizzing loop
+// ------------------ 
+var startClicked = function(){
+   
+    // hide the start button
+    startButtonEl.hidden = true;
+    
+    // start the timer
+    var runningTime = 5; 
+    timerFunc(runningTime, timeElapsed); // see callbacks for timeElapsed
+
+    // put the first question in
+    putQuestionInDOM(qArray[0]);
+};
+
 
 
 // -------------------
@@ -155,64 +207,73 @@ var updateAtTimeCycle = function(timeval){
     }
 };
 
-// main countdown loop 
-var startClicked = function(){
-   
-    // hide the start button
-    startButtonEl.hidden = true;
 
+// main timerfunction holding the set interval     
+ function timerFunc(countdownT, tElapsedCallback){
+    // takes integer for countdown time ans a callback handling what happens when the time is elapsed
     
-    var countdown = 5;
+    // subtract 1 from countdown every 1s and excecute callBack when done
+    var countdownInnerFunc = function(){
+       
+        updateAtTimeCycle(countdownT);
+        countdownT --;
 
-    // function running in timeInterval     
-    var countdownFunc = function(){
-        console.log(countdown);
-        updateAtTimeCycle(countdown);
-        countdown --;
-
-        if(countdown <= 0){
+        if(countdownT <= 0){
             clearInterval(timer);
-            updateAtTimeCycle("Time is up! 0");
-            
-            return;
-        }
-
-
-
-    }
-
-    var timer = setInterval(countdownFunc,1000);    
+            updateAtTimeCycle("Time is up! 0"); 
+            tElapsedCallback(); 
+        };
+    };
     
-    // test element build
-    var qEll = buildQuestionElement(qArray[1]);
-    mainEl.appendChild(qEll);
-    
-
-
-    // capture events
-    //Event listener on question container, sending back the data-index from the button pressed  
-    qEll.addEventListener("click", ansBtnClickHander);    
-    
-    // display score
-
-};
+    var timer = setInterval(countdownInnerFunc,1000);    
+}
 
 // ------------------
 // Callback funcitons
 // ------------------
-var ansBtnClickHander = function(event){
-    var ansIdx = event.target.getAttribute("data-index");    
+
+function timeElapsed(){
+    console.log("Time Elapsed");
+    
+    scoreEl = document.createElement("div");
+    scoreEl.textContent = "Congrats you are Done, your score was: " + score;
+
+    document.getElementById("qContainer").innerHTML = ""
+    document.getElementById("qContainer").appendChild(scoreEl);
+
+    // reset
+};
+
+    
+var ansBtnClickHandler = function(event){    
+    // clicks on main bubbleing up and captured if data-index in attribute 
+    var ansIdx = event.target.getAttribute("data-index");        
     if(ansIdx){
         console.log("clicked: " + ansIdx);
-    }; 
+     
+        // evaluate answer    
+        buildReponseEl(qArray[i_current], ansIdx);
+
+        // reset ans pose next question
+        if(i_current < qArray.length){
+            i_current ++
+            putQuestionInDOM(qArray[i_current])
+
+        }   
+    };    
 };
+
+
 
 
 
 // ------ END Function Declarations ------------
 
-
-
+// listen for clicks on the main element
+mainEl.addEventListener("click", ansBtnClickHandler); 
+   
 // ---------- main excecution ------------
 startButtonEl.addEventListener("click", startClicked);
+
+
 
