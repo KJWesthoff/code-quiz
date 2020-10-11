@@ -19,7 +19,7 @@ headerEl.setAttribute("style", "height: 60px; display: flex; flex-wrap: wrap; ju
 //high scores div (to be modified on a click event)
 var highscoreLinkEl = document.createElement("div");
 highscoreLinkEl.textContent = "High Scores"
-
+highscoreLinkEl.setAttribute("id", "highscoresBtn");
 
 //display timer part
 var timerEl = document.createElement("div");
@@ -174,7 +174,13 @@ var buildReponseEl = function(qEl, answer){
 // main quizzing when start is clicked
 // ----------------------------------- 
 var startClicked = function(){
-   
+
+    // reset
+    i_current = 0; // current iteration of questions start at 0
+    score = 0; // score initilized to 0
+    currentTime = 75; //seconds
+
+    document.getElementById("qContainer").innerHTML = ""
     // hide the start button
     startButtonEl.hidden = true;
     
@@ -202,9 +208,7 @@ var updateAtTimeCycle = function(timeval){
 
 
  // main timerfunction holding the set interval     
-function timerFunc(tElapsedCallback){
-    
-    
+function timerFunc(tElapsedCallback){  
     // takes integer for countdown time ans a callback handling what happens when the time is elapsed
     
     // subtract 1 from countdown every 1s and excecute callBack when done
@@ -219,7 +223,6 @@ function timerFunc(tElapsedCallback){
             tElapsedCallback(); 
         };
     };
-    
     var timer = setInterval(countdownInnerFunc,1000);    
 }
 
@@ -227,13 +230,13 @@ function timerFunc(tElapsedCallback){
 // Callback funcitons
 // ------------------
 
+// When countdown has ended ...
 function timeElapsed(){
     console.log("Time Elapsed");
     
     // show score
     var scoreEl = document.createElement("div");
     scoreEl.textContent = "Congrats you are Done, your score was: " + score;
-    
     
 
     // clear the page and show scores
@@ -264,8 +267,7 @@ function timeElapsed(){
             localStorage.setItem("scoreArray",JSON.stringify(storageArray));
         };
     };
-    // reset
-
+   
 };
 
     
@@ -292,13 +294,56 @@ var ansBtnClickHandler = function(event){
     };    
 };
 
-// ------ event listeners ------------
+var highScoresClicked = function(){
+    // get highscores from storage
 
-// listen for clicks on the main element
-mainEl.addEventListener("click", ansBtnClickHandler); 
+
+    // clear qContainer
+    // Build a highscore element
+    
+    var highScoreEl = document.createElement("div");
+    var highScoreElH2 = document.createElement("h2");
+    highScoreElH2.textContent = "High scores: ";
+    highScoreEl.appendChild(highScoreElH2);
+
+    var storageArray = localStorage.getItem("scoreArray");
+    if(storageArray != null){;
+        
+        var oListEl = document.createElement("ol");
+        
+        // parse and sort the highscore array
+        storageArray = JSON.parse(storageArray)
+        storageArray = storageArray.sort((a,b)=>(a.score > b.score)?-1:1);
+
+        for(highScore of storageArray){
+            var listEl = document.createElement("li");
+            listEl.textContent = "Name: " + highScore.name + " Score: " + highScore.score
+            oListEl.appendChild(listEl);                 
+        }; 
+        highScoreEl.appendChild(oListEl);
+        
+    } else {
+        var scoresParagraph = document.createElement("div");
+        scoresParagraph.textContent = "nothing stored yet";
+        highScoreEl.appendChild(scoresParagraph);
+    };
+
+       
+    // clear the page and show scores
+    document.getElementById("qContainer").innerHTML = ""
+    document.getElementById("qContainer").appendChild(highScoreEl);
+
+};
+
+// ------ event listeners ------------
    
 // ---------- main excecution ------------
+// listen for clicks on the main element
+mainEl.addEventListener("click", ansBtnClickHandler); 
+
+// buttons
 startButtonEl.addEventListener("click", startClicked);
+highscoreLinkEl.addEventListener("click", highScoresClicked);
 
 
 
