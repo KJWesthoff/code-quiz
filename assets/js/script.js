@@ -1,8 +1,67 @@
 
 // ------ Variable Declarations ------------
 
+
+
+// ------------------
+// Array of questions
+// ------------------
+var qArray = [];
+
+// Question object structure:
+test = {q:"What is the meaning of life?",
+        p: [44, 43, 42, 41],
+        a: 2};
+
+test2 = {q:"What is Hoisting in programming?",
+p: ["The elevated feeling you get when code works","Affecting the order which code is interpreted", "Picking variables out of deeply nested for loops"],
+a: 1};
+
+test3 = {q:"What is Bubbeling in Javascript?",
+p: ["Affecting the order which events are handled","The feeling you get when code works", "Putting rounded corners on all borders"],
+a: 0};
+
+test4 = {q: "Where is the correct place to insert a JavaScript?",
+p: ["The <head> section", "The <body> section", "The <footer> section"],
+a: 1};
+
+test5 = {q: "How many equal signs should go in equal to conditional if you also want oprand types to match?",
+p: ["One", "Two", "Three", "Four"],
+a: 2};
+
+test6 = {q: "Inside which HTML element do we put the JavaScript?",
+p: ["<scripting>", "<script>", "<js>", "<jacascript>"],
+a: 1};
+
+test7 = {q: "Which will not generate a window pop-up?",
+p: ["window.alert", "window.confirm", "window.pop", "window.prompt"],
+a: 2};
+
+test8 = {q: "Which appproach will not get a value out of a function running in setInterval?",
+p: ["Have the callback return a value", "Define the variable in a scope above "],
+a: 1}
+
+
+qArray[0] = test;
+qArray[1] = test2;
+qArray[2] = test3;
+qArray[3] = test4;
+qArray[4] = test5;    
+qArray[5] = test6;
+qArray[6] = test7; 
+
+
+
+
+// Initialize page-global variables
+var i_current = 0; // current iteration of questions start at 0
+var score = 0; // score initilized to 0
+var currentTime = 75; //seconds
+
+
+
 // ------------------------------
-// build page statid DOM backbone from blank
+// build page static DOM backbone from blank
 // ------------------------------
 
 
@@ -13,12 +72,12 @@ var bodyEl = document.body;
 // make a header showing highscores and timer
 // ------------------------------------------
 var headerEl = document.createElement("header");
-headerEl.setAttribute("style", "height: 60px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center");
+headerEl.setAttribute("style", "height: 60px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 0 20px;font-size: 20px");
 
 
 //high scores div (to be modified on a click event)
 var highscoreLinkEl = document.createElement("div");
-highscoreLinkEl.textContent = "High Scores"
+highscoreLinkEl.textContent = "High Scores - Click Here";
 highscoreLinkEl.setAttribute("id", "highscoresBtn");
 
 //display timer part
@@ -28,7 +87,7 @@ var timerEl = document.createElement("div");
 var startButtonEl = document.createElement("button");
 startButtonEl.setAttribute("id", "startbutton");
 startButtonEl.setAttribute("type", "button");
-startButtonEl.setAttribute("style", "width: 200px");
+startButtonEl.setAttribute("style", "width: 200px; height: 50px");
 startButtonEl.textContent = "Start Timer"
 
 // buld header
@@ -42,13 +101,13 @@ bodyEl.appendChild(headerEl);
 // Make the main part for start button and quiz
 // --------------------------------------------
 var mainEl = document.createElement("main");
-mainEl.setAttribute("style", "display: flex; flex-direction: column-reverse; ;text-align:center");
+//mainEl.setAttribute("style", "display: flex; flex-direction: column-reverse; align-items center");
 
 
 //buid a containerdiv for questions 
 var qContainerEl = document.createElement("div");
 qContainerEl.setAttribute("id", "qContainer");
-qContainerEl.setAttribute("style", "display: flex; flex-direction: column-reverse");
+qContainerEl.setAttribute("style", "display: flex; flex-direction: column-reverse; align-items: center");
 
 
 //build main section put it on the body
@@ -56,45 +115,11 @@ mainEl.appendChild(qContainerEl);
 bodyEl.appendChild(mainEl);
 
 
-// ------------------
-// Array of questions
-// ------------------
-var qArray = [];
-
-// Question object structure:
-test = {q:"What is the meaning of life",
-        p: [44, 43, 42, 41],
-        a: 2};
-
-test2 = {q:"What is Hoisting",
-p: ["The feeling you get when code works","Affecting the order which code is interpreted"],
-a: 1};
-
-test3 = {q:"What is Bubbeling",
-p: ["The feeling you get when code works","Affecting the order which events are handled", "Putting rounded corners on all borders"],
-a: 1};
-
-test4 = {q: "what is the best way to get a reply from a function running in a timeInterval",
-p: ["Use a callback", "put it in a global varible", "you can't"],
-a: 0};
 
 
-qArray[0] = test;
-qArray[1] = test2;
-qArray[2] = test3;
-qArray[3] = test4;
-    
-
-
-// Initialize page-global variables
-var i_current = 0; // current iteration of questions start at 0
-var score = 0; // score initilized to 0
-var currentTime = 75; //seconds
-
-
-// --------------------------
-// Build dynamic DOM elements
-// --------------------------
+// ------------------------------------------------
+// Build functions to generate dynamic DOM elements
+// ------------------------------------------------
 
 
 var buildQuestionElement = function(qObj){
@@ -103,7 +128,6 @@ var buildQuestionElement = function(qObj){
     qEl.setAttribute("style", "display: flex; flex-direction: column; flex-wrap: wrap")
     
    
-    
     // Heading with the question and append to qEl
     var qH2El = document.createElement("h2");
     qH2El.textContent = qObj.q;
@@ -116,7 +140,7 @@ var buildQuestionElement = function(qObj){
     return qEl;
 };
 
-// Build a block of buttins with possible answers
+// Build a block of buttons with possible answers
 var buildAnswerbuttons = function(qObj){
     // takes a question object and returns a div with buttons
     var ansBtnContainer = document.createElement("div");
@@ -139,7 +163,8 @@ var putQuestionInDOM = function(qObj){
     qEll = buildQuestionElement(qObj);
     var id = "qElement" + i_current;
     
-    qEll.setAttribute("id", id)
+    qEll.setAttribute("id", id);
+    qEll.setAttribute("style", "display: inline; width: 500px; padding: 20px; margin: 20px; border: 2px solid black" )
     // get the current qContainer and replace it with the new qEll
     qContainer = document.getElementById("qContainer"); 
     qContainer.appendChild(qEll); 
@@ -158,10 +183,12 @@ var buildReponseEl = function(qEl, answer){
     if(qEl.a === answer){
         right = "Correct ! No: " + (qEl.a+1) + " is the right answer";
         score += 100;
+        
+
     } else {
-        right = "Not Correct !" + " you answered " + (answer+1) + " The right answer is " + (qEl.a+1) + "10s subtracted";
+        right = "Not Correct !" + " you answered " + (answer+1) + " The right answer is " + (qEl.a+1) + "15s subtracted";
         // subtract time 
-        currentTime -= 10;       
+        currentTime -= 15;       
     };
 
     // append answer to the question    
@@ -187,6 +214,9 @@ var startClicked = function(){
     // start the timer
     var runningTime = 75; 
     timerFunc(timeElapsed); // see callbacks for timeElapsed
+
+    //randomize qArray
+    qArray.sort( () => .5 - Math.random() );
 
     // put the first question in
     putQuestionInDOM(qArray[0]);
@@ -277,7 +307,6 @@ var ansBtnClickHandler = function(event){
     var ansIdx = event.target.getAttribute("data-index");        
     if(ansIdx){
         
-     
         // evaluate answer    
         buildReponseEl(qArray[i_current], ansIdx);
 
@@ -286,7 +315,7 @@ var ansBtnClickHandler = function(event){
             i_current++
             console.log(i_current);
             putQuestionInDOM(qArray[i_current]);
-            
+           
         } else {
             alert("No more questions");
             currentTime = 1;
@@ -305,6 +334,9 @@ var highScoresClicked = function(){
     var highScoreElH2 = document.createElement("h2");
     highScoreElH2.textContent = "High scores: ";
     highScoreEl.appendChild(highScoreElH2);
+
+    var clearHighscoresBtn = document.createElement("button");
+    clearHighscoresBtn.textContent = "Clear Highscores?";
 
     var storageArray = localStorage.getItem("scoreArray");
     if(storageArray != null){;
@@ -326,18 +358,30 @@ var highScoresClicked = function(){
         var scoresParagraph = document.createElement("div");
         scoresParagraph.textContent = "nothing stored yet";
         highScoreEl.appendChild(scoresParagraph);
+        clearHighscoresBtn.hidden = true;
     };
 
+   
+    
+    
+    clearHighscoresBtn.addEventListener("click",clearHighscoresHandler);
        
     // clear the page and show scores
-    document.getElementById("qContainer").innerHTML = ""
+    document.getElementById("qContainer").innerHTML = "";
+    document.getElementById("qContainer").appendChild(clearHighscoresBtn);
     document.getElementById("qContainer").appendChild(highScoreEl);
+    
 
 };
 
+var clearHighscoresHandler = function(){
+    localStorage.removeItem("scoreArray");
+    highScoresClicked();
+}
+
+
 // ------ event listeners ------------
    
-// ---------- main excecution ------------
 // listen for clicks on the main element
 mainEl.addEventListener("click", ansBtnClickHandler); 
 
