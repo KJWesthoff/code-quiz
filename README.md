@@ -1,9 +1,9 @@
 # code-quiz
-A quiz showing quiestions about Javascript to the user.
-* Quis is timed, countdown starts at 75s
+A quiz showing questions about Javascript to the user.
+* Quiz is timed, countdown starts at 75s
 * Wrong answers causes 15s to be subtracted from the timer
 * Correct anwers are rewardedwith 100pts
-* User can save resutls in browser
+* User can save results in browser
 * Questions are posed until the time is up or all questions answered
 
 

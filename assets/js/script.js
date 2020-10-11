@@ -109,6 +109,18 @@ var qContainerEl = document.createElement("div");
 qContainerEl.setAttribute("id", "qContainer");
 qContainerEl.setAttribute("style", "display: flex; flex-direction: column-reverse; align-items: center");
 
+//add a readme
+var readMeEL = document.createElement("div");
+readMeEL.innerHTML =`<p> # code-quiz <br>
+A quiz showing questions about Javascript to the user. <br>
+* Quiz is timed, countdown starts at 75s <br>
+* Wrong answers causes 15s to be subtracted from the timer <br>
+* Correct anwers are rewardedwith 100pts <br>
+* User can save results in browser <br>
+* Questions are posed until the time is up or all questions answered <br>
+</p>`;
+
+qContainerEl.appendChild(readMeEL);
 
 //build main section put it on the body
 mainEl.appendChild(qContainerEl);
