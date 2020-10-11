@@ -297,7 +297,9 @@ function timeElapsed(){
             localStorage.setItem("scoreArray",JSON.stringify(storageArray));
         };
     };
-   
+    // Show the start button to ry again
+    startButtonEl.textContent = "Try Again?"
+    startButtonEl.hidden = false;
 };
 
     
@@ -324,12 +326,7 @@ var ansBtnClickHandler = function(event){
 };
 
 var highScoresClicked = function(){
-    // get highscores from storage
-
-
-    // clear qContainer
-    // Build a highscore element
-    
+    // get highscores from storage    
     var highScoreEl = document.createElement("div");
     var highScoreElH2 = document.createElement("h2");
     highScoreElH2.textContent = "High scores: ";
@@ -361,9 +358,6 @@ var highScoresClicked = function(){
         clearHighscoresBtn.hidden = true;
     };
 
-   
-    
-    
     clearHighscoresBtn.addEventListener("click",clearHighscoresHandler);
        
     // clear the page and show scores
@@ -371,7 +365,6 @@ var highScoresClicked = function(){
     document.getElementById("qContainer").appendChild(clearHighscoresBtn);
     document.getElementById("qContainer").appendChild(highScoreEl);
     
-
 };
 
 var clearHighscoresHandler = function(){
