@@ -87,17 +87,9 @@ qArray[3] = test4;
 
 
 // YYikes global variables
-var i_current = 0;
-var clicked = null;
-var score = 0;
-
-
-
-
-// ------ END Variable Declarations ------------
-
-
-
+var i_current = 0; // current iteration of questions start at 0
+var score = 0; // score initilized to 0
+var currentTime = 75; //seconds
 
 
 // ------ Function Declarations ------------
@@ -149,7 +141,7 @@ var buildAnswerbuttons = function(qObj){
 var putQuestionInDOM = function(qObj){
     qEll = buildQuestionElement(qObj);
     var id = "qElement" + i_current;
-    console.log(id);
+    
     qEll.setAttribute("id", id)
     // get the current qContainer and replace it with the new qEll
     qContainer = document.getElementById("qContainer"); 
@@ -163,13 +155,19 @@ var buildReponseEl = function(qEl, answer){
     // takes a question object and the user reponse, returns a dom element with a reponse
     
     respEl = document.createElement("div");
-   
-    if(parseInt(qEl.a) === parseInt(answer)){
-        right = "Correct !";
+    // cast test as integers
+    qEl.a = parseInt(qEl.a)
+    answer = parseInt(answer)
+
+
+    if(qEl.a === answer){
+        right = "Correct ! No: " + (qEl.a+1) + " is the right answer";
         score += 100;
     } else {
-        right = "Not Correct !";
-
+        right = "Not Correct !" + " you answered " + (answer+1) + " The right answer is " + (qEl.a+1);
+        // subtract time and restart timer
+        currentTime -= 10;
+       
     };
 
     respEl.textContent = "That is: " + right; 
@@ -178,7 +176,7 @@ var buildReponseEl = function(qEl, answer){
 };
 
 // ------------------
-// main quizzing loop
+// main quizzing 
 // ------------------ 
 var startClicked = function(){
    
@@ -186,8 +184,8 @@ var startClicked = function(){
     startButtonEl.hidden = true;
     
     // start the timer
-    var runningTime = 5; 
-    timerFunc(runningTime, timeElapsed); // see callbacks for timeElapsed
+    var runningTime = 75; 
+    timerFunc(timeElapsed); // see callbacks for timeElapsed
 
     // put the first question in
     putQuestionInDOM(qArray[0]);
@@ -208,17 +206,19 @@ var updateAtTimeCycle = function(timeval){
 };
 
 
-// main timerfunction holding the set interval     
- function timerFunc(countdownT, tElapsedCallback){
+ // main timerfunction holding the set interval     
+function timerFunc(tElapsedCallback){
+    
+    
     // takes integer for countdown time ans a callback handling what happens when the time is elapsed
     
     // subtract 1 from countdown every 1s and excecute callBack when done
     var countdownInnerFunc = function(){
        
-        updateAtTimeCycle(countdownT);
-        countdownT --;
-
-        if(countdownT <= 0){
+        updateAtTimeCycle(currentTime);
+        currentTime --;
+        
+        if(currentTime <= 0){
             clearInterval(timer);
             updateAtTimeCycle("Time is up! 0"); 
             tElapsedCallback(); 
@@ -247,18 +247,23 @@ function timeElapsed(){
     
 var ansBtnClickHandler = function(event){    
     // clicks on main bubbleing up and captured if data-index in attribute 
+
     var ansIdx = event.target.getAttribute("data-index");        
     if(ansIdx){
-        console.log("clicked: " + ansIdx);
+        
      
         // evaluate answer    
         buildReponseEl(qArray[i_current], ansIdx);
 
-        // reset ans pose next question
-        if(i_current < qArray.length){
-            i_current ++
-            putQuestionInDOM(qArray[i_current])
-
+        // Pose next question
+        if(i_current < qArray.length-1 ) {
+            i_current++
+            console.log(i_current);
+            putQuestionInDOM(qArray[i_current]);
+            
+        } else {
+            alert("No more questions");
+            currentTime = 1;
         }   
     };    
 };
