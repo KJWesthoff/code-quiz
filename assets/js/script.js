@@ -86,13 +86,10 @@ qArray[3] = test4;
     
 
 
-// YYikes global variables
+// Initialize page-global variables
 var i_current = 0; // current iteration of questions start at 0
 var score = 0; // score initilized to 0
 var currentTime = 75; //seconds
-
-
-// ------ Function Declarations ------------
 
 
 // --------------------------
@@ -146,38 +143,36 @@ var putQuestionInDOM = function(qObj){
     // get the current qContainer and replace it with the new qEll
     qContainer = document.getElementById("qContainer"); 
     qContainer.appendChild(qEll); 
-    
 };
 
 
 // Check answers and keep talley
 var buildReponseEl = function(qEl, answer){
-    // takes a question object and the user reponse, returns a dom element with a reponse
+    // takes a question object and the user reponse, returns a dom element with a reponse 
     
     respEl = document.createElement("div");
-    // cast test as integers
+    // convert to integers for check with if
     qEl.a = parseInt(qEl.a)
     answer = parseInt(answer)
-
 
     if(qEl.a === answer){
         right = "Correct ! No: " + (qEl.a+1) + " is the right answer";
         score += 100;
     } else {
-        right = "Not Correct !" + " you answered " + (answer+1) + " The right answer is " + (qEl.a+1);
-        // subtract time and restart timer
-        currentTime -= 10;
-       
+        right = "Not Correct !" + " you answered " + (answer+1) + " The right answer is " + (qEl.a+1) + "10s subtracted";
+        // subtract time 
+        currentTime -= 10;       
     };
 
+    // append answer to the question    
     respEl.textContent = "That is: " + right; 
     var id = "qElement" + i_current;
     document.getElementById(id).appendChild(respEl);
 };
 
-// ------------------
-// main quizzing 
-// ------------------ 
+// -----------------------------------
+// main quizzing when start is clicked
+// ----------------------------------- 
 var startClicked = function(){
    
     // hide the start button
@@ -235,13 +230,42 @@ function timerFunc(tElapsedCallback){
 function timeElapsed(){
     console.log("Time Elapsed");
     
-    scoreEl = document.createElement("div");
+    // show score
+    var scoreEl = document.createElement("div");
     scoreEl.textContent = "Congrats you are Done, your score was: " + score;
+    
+    
 
+    // clear the page and show scores
     document.getElementById("qContainer").innerHTML = ""
     document.getElementById("qContainer").appendChild(scoreEl);
 
+
+    // get player name using a prompt and save it to loaca storage
+    var playerName = window.prompt("Type a player name to save score");   
+    
+    // if user wants to put something in
+    if(playerName){
+
+        scoreObj = { 
+            "name": playerName,
+            "score": score
+        };
+
+        // get highscores from storage
+        var storageArray = localStorage.getItem("scoreArray");
+        if(storageArray != null){;
+            storageArray = JSON.parse(storageArray)
+            storageArray.push(scoreObj);
+            localStorage.setItem("scoreArray",JSON.stringify(storageArray));
+        } else {
+            var storageArray = [];
+            storageArray.push(scoreObj);
+            localStorage.setItem("scoreArray",JSON.stringify(storageArray));
+        };
+    };
     // reset
+
 };
 
     
@@ -268,11 +292,7 @@ var ansBtnClickHandler = function(event){
     };    
 };
 
-
-
-
-
-// ------ END Function Declarations ------------
+// ------ event listeners ------------
 
 // listen for clicks on the main element
 mainEl.addEventListener("click", ansBtnClickHandler); 
