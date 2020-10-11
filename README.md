@@ -16,5 +16,17 @@ A quiz showing quiestions about Javascript to the user.
 [https://kjwesthoff.github.io/code-quiz/](https://kjwesthoff.github.io/code-quiz/)
 
 # Technical Notes: 
-Since the topic for this module was DOM manipulation, i decided to do the whole thing in
+Since the topic for this module was DOM manipulation, i decided to build the whole page in JavaScript (see the minimal HTML page below). I have tried to comment the code and organize it so it is readable. I have not emphesized the estethics of the page, so please beat with the somewhat dull looking page..
 
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Code Quiz</title>
+</head>
+<body>
+    <script src="./assets/js/script.js"></script>
+</body>
+</html>
+</dl>
+```
